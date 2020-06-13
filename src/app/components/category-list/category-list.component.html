@@ -1,0 +1,13 @@
+<ion-reorder-group (ionItemReorder)="onReorder($event)" disabled="false">
+  <ion-item button (click)="0" detail *ngFor="let category of categories">
+    <ion-label>
+      <h3>{{ category.title }}</h3>
+    </ion-label>
+    <ion-reorder slot="start">
+      <ion-icon name="reorder-four-outline"></ion-icon>
+    </ion-reorder>
+    <ion-button slot="" class="rename-button" fill="clear" (click)="onRenameClick(category)">
+      <ion-icon name="create-outline"></ion-icon>
+    </ion-button>
+  </ion-item>
+</ion-reorder-group>

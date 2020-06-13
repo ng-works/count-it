@@ -1,0 +1,15 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title class="ion-text-start">Categories</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onAddCategoryClick()">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Add
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <category-list [categories]="categories" (positionChange)="onPositionChange($event)"></category-list>
+</ion-content>
