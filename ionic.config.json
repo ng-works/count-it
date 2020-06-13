@@ -1,0 +1,7 @@
+{
+  "name": "count-it",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
