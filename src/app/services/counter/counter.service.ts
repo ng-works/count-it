@@ -8,7 +8,7 @@ const STORAGE_KEY = 'count-it:categories'
 @Injectable({
   providedIn: 'root'
 })
-export class CategoryService {
+export class CounterService {
   private categories: CategoryModel[]
   private categoriesSubject: Subject<CategoryModel[]>
 
@@ -24,17 +24,17 @@ export class CategoryService {
     }
   }
 
-  getCategories(): CategoryModel[] {this.categoriesSubject.subscribe()
+  getCounterCategories(): CategoryModel[] {this.categoriesSubject.subscribe()
     return this.categories
   }
 
-  watchCategories(subscriber: (categories: CategoryModel[]) => void): Subscription {
+  watchCounterCategories(subscriber: (categories: CategoryModel[]) => void): Subscription {
     const ret = this.categoriesSubject.subscribe(subscriber)
     subscriber(this.categories)
     return ret
   }
 
-  addCategory(categoryName: string) {
+  addCounterCategory(categoryName: string) {
     const category = new CategoryModel(
       this.getNewCategoryId(),
       categoryName
@@ -44,10 +44,10 @@ export class CategoryService {
     this.update()
   }
 
-  renameCategory(categoryId: number, newTitle: string) {
+  renameCounterCategory(categoryId: number, newTitle: string) {
     const index = this.categories.findIndex(it => it.id === categoryId)
 
-    if (index >= 0) {console.log(this.categories[index])
+    if (index >= 0) {
       this.categories = [...this.categories]
       this.categories[index] = this.categories[index].copy()
       this.categories[index].title = newTitle
@@ -55,12 +55,12 @@ export class CategoryService {
     }
   }
 
-  removeCategory(categoryId: number) {
+  removeCounterCategory(categoryId: number) {
     this.categories = this.categories.filter(it => it.id !== categoryId)
     this.update()
   }
 
-  relocateCategory(categoryId: number, index: number) {
+  relocateCounterCategory(categoryId: number, index: number) {
     if (index < this.categories.length) {
       const oldIndex = this.categories.findIndex(it => it.id === categoryId)
 
@@ -83,7 +83,7 @@ export class CategoryService {
 
   private update() {
     this.categoriesSubject.next(this.categories)
-
+console.log(this.categories)
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.categories))
   }
 }

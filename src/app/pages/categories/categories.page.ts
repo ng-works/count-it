@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { AlertController, IonContent } from '@ionic/angular'
-import { CategoryService } from '../../services/category/category.service'
+import { CounterService } from '../../services/counter/counter.service'
 import { CategoryModel } from '../../models/category.model'
 import { Subscription } from 'rxjs';
 import { PositionChangeEvent } from 'src/app/events/PositionChangeEvent';
@@ -20,11 +20,11 @@ export class CategoriesPage implements OnInit, OnDestroy {
 
   constructor(
     private alertController: AlertController,
-    private categoryService: CategoryService
+    private counterService: CounterService
   ) {}
 
   ngOnInit() {
-    this.categoriesSubscription = this.categoryService.watchCategories(
+    this.categoriesSubscription = this.counterService.watchCounterCategories(
       (categories: CategoryModel[]) => {
         this.categories = categories
       }
@@ -62,16 +62,20 @@ export class CategoriesPage implements OnInit, OnDestroy {
   }
 
   onPositionChange(ev: PositionChangeEvent) {
-    this.categoryService.relocateCategory(this.categories[ev.oldIndex].id, ev.newIndex)
+    this.counterService.relocateCounterCategory(this.categories[ev.oldIndex].id, ev.newIndex)
   }
 
   private onAddCategory(data: { categoryName: string }) {
     const categoryName: string = data.categoryName.trim()
 
      if (categoryName) {
-       this.categoryService.addCategory(categoryName)
+       this.counterService.addCounterCategory(categoryName)
 
        setTimeout(() => this.content.scrollToBottom(100))
      }
+  }
+
+  private onCategoryClick(category: CategoryModel) {
+    console.log(category)
   }
 }

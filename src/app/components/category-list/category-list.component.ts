@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { ItemReorderEventDetail } from '@ionic/core'
 import { AlertController } from '@ionic/angular'
 import { CategoryModel } from '../../models/category.model'
 import { PositionChangeEvent } from '../../events/PositionChangeEvent'
 import { CategoryTitleChangeEvent } from '../../events/CategoryTitleChangeEvent'
-import { CategoryService } from 'src/app/services/category/category.service'
+import { CounterService } from 'src/app/services/counter/counter.service'
 
 @Component({
   selector: 'category-list',
@@ -21,7 +22,7 @@ export class CategoryListComponent implements OnInit {
   categoryTitleChange: EventEmitter<CategoryTitleChangeEvent>
 
   constructor(
-    private categoryService: CategoryService,
+    private counterService: CounterService,
     private alertController: AlertController
   ) {
     this.positionChange = new EventEmitter()
@@ -30,7 +31,7 @@ export class CategoryListComponent implements OnInit {
   ngOnInit() {
   }
 
-  onReorder(ev: any) {
+  onReorder(ev: CustomEvent<ItemReorderEventDetail>) {
     const positionChangeEvent: PositionChangeEvent = {
       type: 'positionChange',
       oldIndex: ev.detail.from,
@@ -38,7 +39,7 @@ export class CategoryListComponent implements OnInit {
     }
 
     this.positionChange.emit(positionChangeEvent)
-    ev.detail.complete()
+    ev.detail.complete(false)
   }
 
   async onRenameClick(category: CategoryModel) {
@@ -68,11 +69,39 @@ export class CategoryListComponent implements OnInit {
     await alert.present()
   }
 
+  async onDeleteClick(category: CategoryModel) {
+    const alert = await this.alertController.create({
+      header: 'Delete category',
+      message: `Are you really sure that you want to delete category "${category.title}?`,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        
+        {
+          text: 'Delete',
+          handler: data => this.deleteCategory(category.id)
+        }
+      ]
+    })
+
+    await alert.present()
+  }
+
+  onCategoryClick(category: CategoryModel) {
+    console.log('clicked', category)
+  }
+
   private renameCategory(categoryId: number, categoryTitle: string) {
     const newTitle = categoryTitle.trim()
     
     if (newTitle) {
-      this.categoryService.renameCategory(categoryId, categoryTitle.trim())
+      this.counterService.renameCounterCategory(categoryId, categoryTitle.trim())
     }
+  }
+
+  private deleteCategory(categoryId: number) {
+    this.counterService.removeCounterCategory(categoryId)
   }
 }

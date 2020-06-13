@@ -9,11 +9,11 @@ const routes: Routes = [
   },
   {
     path: 'categories',
-    loadChildren: () => import('./pages/categories/categories.module').then( m => m.CategoriesPageModule)
+    loadChildren: () => import('./pages/categories/categories.module').then(m => m.CategoriesPageModule)
   },
   {
-    path: 'counters',
-    loadChildren: () => import('./pages/counters/counters.module').then( m => m.CountersPageModule)
+    path: 'category/:id',
+    loadChildren: () => import('./pages/counters/counters.module').then(m => m.CountersPageModule)
   }
 ];
 @NgModule({
