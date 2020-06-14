@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { AlertController, IonContent } from '@ionic/angular'
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { AlertController, IonContent, NavController } from '@ionic/angular'
 import { CounterService } from '../../services/counter/counter.service'
-import { CategoryModel } from '../../models/category.model'
+import { Category } from '../../models/category.model'
 import { Subscription } from 'rxjs';
 import { PositionChangeEvent } from 'src/app/events/PositionChangeEvent';
 
@@ -11,7 +11,7 @@ import { PositionChangeEvent } from 'src/app/events/PositionChangeEvent';
   styleUrls: ['./categories.page.scss'],
 })
 export class CategoriesPage implements OnInit, OnDestroy {
-  categories: CategoryModel[]
+  categories: Category[]
   
   @ViewChild('content')
   content: IonContent
@@ -19,13 +19,14 @@ export class CategoriesPage implements OnInit, OnDestroy {
   private categoriesSubscription: Subscription
 
   constructor(
+    private navController: NavController,
     private alertController: AlertController,
     private counterService: CounterService
   ) {}
 
   ngOnInit() {
     this.categoriesSubscription = this.counterService.watchCounterCategories(
-      (categories: CategoryModel[]) => {
+      (categories: Category[]) => {
         this.categories = categories
       }
     )
@@ -75,7 +76,7 @@ export class CategoriesPage implements OnInit, OnDestroy {
      }
   }
 
-  private onCategoryClick(category: CategoryModel) {
+  private onCategoryClick(category: Category) {
     console.log(category)
   }
 }

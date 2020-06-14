@@ -1,15 +1,18 @@
-export class CategoryModel {
-  static fromJson({ id, title }) {
-    return new CategoryModel(id, title)
+import { Counter } from './counter.model'
+
+export class Category {
+  static fromJson({ id, title, counters }) {
+    return new Category(id, title, counters.map((it: any) => Counter.fromJson(it)))
   }
   
   constructor(
     public id: number,
-    public title: string
+    public title: string,
+    public counters: Counter[] = []
   ) {}
 
   copy() {
-    return new CategoryModel(this.id, this.title)
+    return new Category(this.id, this.title, this.counters)
   }
 
   toString = `[Category #${this.id}: ${this.title}]` 

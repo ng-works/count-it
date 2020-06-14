@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { PartialObserver, Subject, Subscription } from 'rxjs'
 import { startWith } from 'rxjs/operators'
-import { CategoryModel } from '../../models/category.model'
+import { Category } from '../../models/category.model'
+import { Counter } from '../../models/counter.model'
 
 const STORAGE_KEY = 'count-it:categories'
 
@@ -9,8 +10,8 @@ const STORAGE_KEY = 'count-it:categories'
   providedIn: 'root'
 })
 export class CounterService {
-  private categories: CategoryModel[]
-  private categoriesSubject: Subject<CategoryModel[]>
+  private categories: Category[]
+  private categoriesSubject: Subject<Category[]>
 
   constructor() {
     this.categoriesSubject = new Subject()
@@ -18,24 +19,28 @@ export class CounterService {
     try {
       this.categories =
         (JSON.parse(localStorage.getItem(STORAGE_KEY)) || [])
-          .map((it: any) => CategoryModel.fromJson(it))
+          .map((it: any) => Category.fromJson(it))
     } catch {
       this.categories = []
     }
   }
 
-  getCounterCategories(): CategoryModel[] {this.categoriesSubject.subscribe()
+  getCounterCategories(): Category[] {
     return this.categories
   }
 
-  watchCounterCategories(subscriber: (categories: CategoryModel[]) => void): Subscription {
+  getCounterCategory(categoryId: number) {
+    return this.categories.find(it => it.id === categoryId) || null
+  }
+
+  watchCounterCategories(subscriber: (categories: Category[]) => void): Subscription {
     const ret = this.categoriesSubject.subscribe(subscriber)
     subscriber(this.categories)
     return ret
   }
 
   addCounterCategory(categoryName: string) {
-    const category = new CategoryModel(
+    const category = new Category(
       this.getNewCategoryId(),
       categoryName
     )
@@ -75,10 +80,41 @@ export class CounterService {
     }
   }
 
-  private getNewCategoryId() {
+  addCounter(categoryId: number, counterName: string) {
+    const category = this.getCounterCategory(categoryId)
+
+    if (category) {
+      const now = new Date()
+
+      const newCounter = new Counter(
+        this.getNewCounterId(),
+        counterName,
+        0,
+        now,
+        now
+      )
+
+      category.counters.push(newCounter)
+      this.update()
+    }
+  }
+
+  private getNewCategoryId(): number {
     return this.categories
       .map(it => it.id)
       .reduce((prev, curr) => Math.max(prev, curr), 0) + 1
+  }
+  
+  private getNewCounterId(): number {
+    let maxId = 0
+
+    this.categories.forEach(category => {
+      category.counters.forEach(counter => {
+        maxId = Math.max(maxId, counter.id)
+      })
+    })
+
+    return maxId + 1
   }
 
   private update() {

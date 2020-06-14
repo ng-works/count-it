@@ -1,10 +1,8 @@
 <ion-reorder-group (ionItemReorder)="onReorder($event)" disabled="false">
   <ion-item button detail (click)="onShowDetails($event, category)" *ngFor="let category of categories">
-    <ion-buttons>
-      <ion-reorder class="reorder" slot="start">
-        <ion-icon name="reorder-four-outline"></ion-icon>
-      </ion-reorder>
-    </ion-buttons>
+    <ion-reorder class="reorder" slot="start" *ngIf="categories.length > 1">
+      <ion-icon name="reorder-four-outline"></ion-icon>
+    </ion-reorder>
     <ion-label>
       <h3>{{ category.title }}</h3>
     </ion-label>

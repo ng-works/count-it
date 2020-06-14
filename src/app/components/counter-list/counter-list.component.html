@@ -1,0 +1,34 @@
+<ion-reorder-group disabled="false">
+  <div *ngFor="let counter of counters">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-row>
+            <ion-reorder>
+              <ion-icon name="reorder-four-outline"></ion-icon>
+            </ion-reorder>
+            <div class="ion-margin-start">
+              {{ counter.title }}
+            </div>
+          </ion-row>
+        </ion-card-title>
+        <div class="counter-meta">
+          Creation: {{ counter.creation.toISOString().substr(0, 16).replace('T', ' ') }}
+          <br>
+          Last update: {{ counter.lastUpdate.toISOString().substr(0, 16).replace('T', ' ') }}
+        </div> 
+      </ion-card-header>
+      <ion-card-content>
+        <ion-buttons>
+          <ion-button color="primary" fill="solid" class="decrement-button">
+            <ion-icon name="remove-outline"></ion-icon>
+          </ion-button>
+          <ion-label class="count-label">{{ counter.count }}</ion-label>
+          <ion-button color="primary" fill="solid" class="increment-button">
+            <ion-icon name="add-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-card-content>
+    </ion-card>
+  </div>
+<ion-reorder-group (ionItemReorder)="onReorder($event)" disabled="false">
