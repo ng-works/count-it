@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
-import { NavController } from '@ionic/angular'
+import { NavController, AlertController } from '@ionic/angular'
 import { Subscription } from 'rxjs'
 import { CounterService } from 'src/app/services/counter/counter.service'
 import { Category } from 'src/app/models/category.model'
@@ -16,6 +16,7 @@ export class CategoryPage implements OnInit, OnDestroy {
   private routeSubscription: Subscription
 
   constructor(
+    private alertController: AlertController,
     private navController: NavController,
     private activatedRoute: ActivatedRoute,
     private counterService: CounterService
@@ -39,5 +40,39 @@ export class CategoryPage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.routeSubscription.unsubscribe()
+  }
+  
+  async onAddCounterClick() {
+    const alert = await this.alertController.create({
+      header: 'Add counter',
+      inputs: [
+        {
+          name: 'counterTitle',
+          type: 'text',
+          placeholder: 'Counter name'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        
+        {
+          text: 'OK',
+          handler: data => this.onAddCounter(data.counterTitle)
+        }
+      ]
+    })
+
+    await alert.present()
+  }
+
+  private onAddCounter(counterTitle: string) {
+    const title = counterTitle.trim()
+
+    if (title) {
+      this.counterService.addCounter(this.category.id, counterTitle)
+    }
   }
 }

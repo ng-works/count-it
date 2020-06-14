@@ -11,20 +11,34 @@
               {{ counter.title }}
             </div>
           </ion-row>
+          <div class="action-buttons">
+            <ion-button class="rename-button" fill="clear" (click)="onRenameClick($event, category)">
+              <ion-icon name="create-outline"></ion-icon>
+            </ion-button>
+            <ion-button class="delete-button" fill="clear" (click)="onDeleteClick($event, category)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </div>
         </ion-card-title>
         <div class="counter-meta">
-          Creation: {{ counter.creation.toISOString().substr(0, 16).replace('T', ' ') }}
+          Creation: {{ counter.creation.toISOString().substr(0, 19).replace('T', ' ') }}
           <br>
-          Last update: {{ counter.lastUpdate.toISOString().substr(0, 16).replace('T', ' ') }}
-        </div> 
+          Last update: {{ counter.lastUpdate.toISOString().substr(0, 19).replace('T', ' ') }}
+        </div>
       </ion-card-header>
       <ion-card-content>
         <ion-buttons>
-          <ion-button color="primary" fill="solid" class="decrement-button">
+          <ion-button
+            color="primary"
+            fill="solid"
+            class="decrement-button"
+            [disabled]="counter.count <= 0"
+            (click)="onDecrementClick(counter)"
+          >
             <ion-icon name="remove-outline"></ion-icon>
           </ion-button>
           <ion-label class="count-label">{{ counter.count }}</ion-label>
-          <ion-button color="primary" fill="solid" class="increment-button">
+          <ion-button color="primary" fill="solid" class="increment-button" (click)="onIncrementClick(counter)">
             <ion-icon name="add-outline"></ion-icon>
           </ion-button>
         </ion-buttons>

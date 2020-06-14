@@ -99,10 +99,40 @@ export class CounterService {
     }
   }
 
+  incrementCounter(counterId: number, delta = 1) {
+    const category = this.getCategoryByCounterId(counterId)
+
+    if (category) {
+      const index = category.counters.findIndex(it => it.id === counterId)
+      const newCounter = category.counters[index].copy()
+      newCounter.count += delta
+      newCounter.lastUpdate = new Date()
+      category.counters = [...category.counters]
+      category.counters[index] = newCounter
+      this.update()
+    }
+  }
+
   private getNewCategoryId(): number {
     return this.categories
       .map(it => it.id)
       .reduce((prev, curr) => Math.max(prev, curr), 0) + 1
+  }
+
+  private getCategoryByCounterId(counterId: number): Category | null {
+    for (let i = 0; i < this.categories.length; ++i) {
+      const category = this.categories[i]
+
+      for (let j = 0; j < category.counters.length; ++j) {
+        const counter = category.counters[j]
+
+        if (counter.id === counterId) {
+          return category
+        }
+      }
+    }
+
+    return null
   }
   
   private getNewCounterId(): number {
@@ -119,7 +149,7 @@ export class CounterService {
 
   private update() {
     this.categoriesSubject.next(this.categories)
-console.log(this.categories)
+
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.categories))
   }
 }
