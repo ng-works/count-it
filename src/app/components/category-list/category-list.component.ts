@@ -44,8 +44,6 @@ export class CategoryListComponent implements OnInit {
   }
 
   async onRenameClick(ev: any, category: Category) {
-    ev.preventDefault()
-
     const alert = await this.alertController.create({
       header: 'Rename category',
       inputs: [
@@ -63,7 +61,7 @@ export class CategoryListComponent implements OnInit {
         },
         
         {
-          text: 'OK',
+          text: 'Rename',
           handler: data => this.renameCategory(category.id, data.categoryTitle)
         }
       ]
@@ -73,11 +71,9 @@ export class CategoryListComponent implements OnInit {
   }
 
   async onDeleteClick(ev: any, category: Category) {
-    ev.preventDefault()
-    
     const alert = await this.alertController.create({
       header: 'Delete category',
-      message: `Are you really sure that you want to delete category "${category.title}?`,
+      message: `Are you really sure that you want to delete category "${category.title}"?`,
       buttons: [
         {
           text: 'Cancel',
@@ -102,10 +98,6 @@ export class CategoryListComponent implements OnInit {
     }
 
     this.navController.navigateForward(['/category', category.id])
-  }
-
-  onCategoryClick(category: Category) {
-    console.log('clicked', category)
   }
 
   private renameCategory(categoryId: number, categoryTitle: string) {

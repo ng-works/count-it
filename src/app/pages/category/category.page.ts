@@ -1,6 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core'
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
-import { NavController, AlertController } from '@ionic/angular'
+import { NavController, AlertController, IonContent } from '@ionic/angular'
 import { Subscription } from 'rxjs'
 import { CounterService } from 'src/app/services/counter/counter.service'
 import { Category } from 'src/app/models/category.model'
@@ -13,6 +13,9 @@ import { Category } from 'src/app/models/category.model'
 export class CategoryPage implements OnInit, OnDestroy {
   category: Category
 
+  @ViewChild('content')
+  content: IonContent
+  
   private routeSubscription: Subscription
 
   constructor(
@@ -73,6 +76,7 @@ export class CategoryPage implements OnInit, OnDestroy {
 
     if (title) {
       this.counterService.addCounter(this.category.id, counterTitle)
+      setTimeout(() => this.content.scrollToBottom(100))
     }
   }
 }

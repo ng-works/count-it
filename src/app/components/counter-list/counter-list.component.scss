@@ -13,13 +13,16 @@
 }
 
 .action-buttons {
-  position: absolute;
-  top: 0;
-  right: 0;
+  position: relative;
+  float: right;
 }
 
 .rename-button {
+  padding: 4px;
+  margin: 0;
 }
 
 .delete-button {
+  padding: 4px;
+  margin: 0;
 }

@@ -79,6 +79,19 @@ export class CounterService {
       }
     }
   }
+  
+  relocateCounter(counterId: number, index: number) {
+    const category = this.getCategoryByCounterId(counterId)
+
+    if (category) {
+      const oldIndex = category.counters.findIndex(it => it.id === counterId)
+      const counter = category.counters[index]
+      category.counters = [...category.counters]
+      category.counters[oldIndex] = category.counters[index]
+      category.counters[index] = counter
+      this.update()
+    }
+  }
 
   addCounter(categoryId: number, counterName: string) {
     const category = this.getCounterCategory(categoryId)
@@ -95,6 +108,34 @@ export class CounterService {
       )
 
       category.counters.push(newCounter)
+      this.update()
+    }
+  }
+
+  removeCounter(counterId: number) {
+    const category = this.getCategoryByCounterId(counterId)
+
+    if (category) {
+      const index = category.counters.findIndex(it => it.id === counterId)
+      
+      category.counters =
+        category.counters.slice(0, index).concat(category.counters.slice(index + 1))
+
+      this.update()
+    }
+  }
+  
+  renameCounter(counterId: number, newTitle: string) {
+    const category = this.getCategoryByCounterId(counterId)
+
+    if (category) {
+      const index = category.counters.findIndex(it => it.id === counterId)
+      category.counters = [...category.counters]
+      
+      const newCounter = category.counters[index].copy()
+      newCounter.title = newTitle
+      newCounter.lastUpdate = new Date()
+      category.counters[index] = newCounter
       this.update()
     }
   }
