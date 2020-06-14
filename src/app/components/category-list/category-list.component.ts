@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { ItemReorderEventDetail } from '@ionic/core'
-import { AlertController } from '@ionic/angular'
+import { AlertController, NavController } from '@ionic/angular'
 import { CategoryModel } from '../../models/category.model'
 import { PositionChangeEvent } from '../../events/PositionChangeEvent'
 import { CategoryTitleChangeEvent } from '../../events/CategoryTitleChangeEvent'
@@ -23,6 +23,7 @@ export class CategoryListComponent implements OnInit {
 
   constructor(
     private counterService: CounterService,
+    private navController: NavController,
     private alertController: AlertController
   ) {
     this.positionChange = new EventEmitter()
@@ -42,7 +43,9 @@ export class CategoryListComponent implements OnInit {
     ev.detail.complete(false)
   }
 
-  async onRenameClick(category: CategoryModel) {
+  async onRenameClick(ev: any, category: CategoryModel) {
+    ev.preventDefault()
+
     const alert = await this.alertController.create({
       header: 'Rename category',
       inputs: [
@@ -69,7 +72,9 @@ export class CategoryListComponent implements OnInit {
     await alert.present()
   }
 
-  async onDeleteClick(category: CategoryModel) {
+  async onDeleteClick(ev: any, category: CategoryModel) {
+    ev.preventDefault()
+    
     const alert = await this.alertController.create({
       header: 'Delete category',
       message: `Are you really sure that you want to delete category "${category.title}?`,
@@ -87,6 +92,14 @@ export class CategoryListComponent implements OnInit {
     })
 
     await alert.present()
+  }
+
+  onShowDetails(ev: any, category: CategoryModel) {
+    if (ev.target.tagName === 'ION-BUTTON') {
+      return
+    }
+
+    this.navController.navigateForward(['/category', category.id])
   }
 
   onCategoryClick(category: CategoryModel) {
