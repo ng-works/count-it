@@ -1,45 +1,35 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { Component, Input, OnInit, Output } from '@angular/core'
 import { ItemReorderEventDetail } from '@ionic/core'
 import { AlertController, NavController } from '@ionic/angular'
-import { Category } from '../../models/category.model'
-import { PositionChangeEvent } from '../../events/PositionChangeEvent'
-import { CategoryTitleChangeEvent } from '../../events/CategoryTitleChangeEvent'
-import { CounterService } from 'src/app/services/counter/counter.service'
+import { Category } from '../../store/models/category.model'
+import { Store } from '@ngrx/store'
+import * as CounterAct from '../../store/actions/counter.actions'
 
 @Component({
   selector: 'category-list',
   templateUrl: './category-list.component.html',
-  styleUrls: ['./category-list.component.scss'],
+  styleUrls: ['./category-list.component.scss']
 })
 export class CategoryListComponent implements OnInit {
   @Input()
   categories: Category[]
 
-  @Output()
-  positionChange: EventEmitter<PositionChangeEvent>
-
-  @Output()
-  categoryTitleChange: EventEmitter<CategoryTitleChangeEvent>
-
   constructor(
-    private counterService: CounterService,
+    private store: Store,
     private navController: NavController,
     private alertController: AlertController
-  ) {
-    this.positionChange = new EventEmitter()
-  }
+  ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   onReorder(ev: CustomEvent<ItemReorderEventDetail>) {
-    const positionChangeEvent: PositionChangeEvent = {
-      type: 'positionChange',
-      oldIndex: ev.detail.from,
-      newIndex: ev.detail.to
-    }
+    this.store.dispatch(
+      CounterAct.moveCounterCategory({
+        id: this.categories[ev.detail.from].id,
+        newIndex: ev.detail.to
+      })
+    )
 
-    this.positionChange.emit(positionChangeEvent)
     ev.detail.complete(false)
   }
 
@@ -59,10 +49,11 @@ export class CategoryListComponent implements OnInit {
           text: 'Cancel',
           role: 'cancel'
         },
-        
+
         {
           text: 'Rename',
-          handler: data => this.renameCategory(category.id, data.categoryTitle)
+          handler: (data) =>
+            this.renameCategory(category.id, data.categoryTitle)
         }
       ]
     })
@@ -79,10 +70,10 @@ export class CategoryListComponent implements OnInit {
           text: 'Cancel',
           role: 'cancel'
         },
-        
+
         {
           text: 'Delete',
-          handler: data => this.deleteCategory(category.id)
+          handler: (data) => this.deleteCategory(category.id)
         }
       ]
     })
@@ -102,13 +93,15 @@ export class CategoryListComponent implements OnInit {
 
   private renameCategory(categoryId: number, categoryTitle: string) {
     const newTitle = categoryTitle.trim()
-    
+
     if (newTitle) {
-      this.counterService.renameCounterCategory(categoryId, categoryTitle.trim())
+      this.store.dispatch(
+        CounterAct.renameCounterCategory({ id: categoryId, title: newTitle })
+      )
     }
   }
 
   private deleteCategory(categoryId: number) {
-    this.counterService.removeCounterCategory(categoryId)
+    this.store.dispatch(CounterAct.deleteCounterCategory({ id: categoryId }))
   }
 }

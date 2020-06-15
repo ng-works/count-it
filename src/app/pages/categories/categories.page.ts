@@ -1,35 +1,36 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core'
 import { AlertController, IonContent, NavController } from '@ionic/angular'
 import { CounterService } from '../../services/counter/counter.service'
-import { Category } from '../../models/category.model'
-import { Subscription } from 'rxjs';
-import { PositionChangeEvent } from 'src/app/events/PositionChangeEvent';
+import { Category } from '../../store/models/category.model'
+import { Subscription } from 'rxjs'
+import { Store } from '@ngrx/store'
+import { selectCounterCategories } from '../../store/selectors/counter.selectors'
+import * as CounterAct from '../../store/actions/counter.actions'
 
 @Component({
   selector: 'app-categories',
   templateUrl: './categories.page.html',
-  styleUrls: ['./categories.page.scss'],
+  styleUrls: ['./categories.page.scss']
 })
 export class CategoriesPage implements OnInit, OnDestroy {
   categories: Category[]
-  
+
   @ViewChild('content')
   content: IonContent
-  
+
   private categoriesSubscription: Subscription
 
   constructor(
+    private store: Store,
     private navController: NavController,
     private alertController: AlertController,
     private counterService: CounterService
   ) {}
 
   ngOnInit() {
-    this.categoriesSubscription = this.counterService.watchCounterCategories(
-      (categories: Category[]) => {
-        this.categories = categories
-      }
-    )
+    this.categoriesSubscription = this.store
+      .select(selectCounterCategories)
+      .subscribe((categories) => (this.categories = categories))
   }
 
   ngOnDestroy() {
@@ -41,7 +42,7 @@ export class CategoriesPage implements OnInit, OnDestroy {
       header: 'Add category',
       inputs: [
         {
-          name: 'categoryName',
+          name: 'categoryTitle',
           type: 'text',
           placeholder: 'Category name'
         }
@@ -51,10 +52,10 @@ export class CategoriesPage implements OnInit, OnDestroy {
           text: 'Cancel',
           role: 'cancel'
         },
-        
+
         {
           text: 'OK',
-          handler: data => this.onAddCategory(data)
+          handler: (data) => this.onAddCategory(data)
         }
       ]
     })
@@ -62,18 +63,29 @@ export class CategoriesPage implements OnInit, OnDestroy {
     await alert.present()
   }
 
+  /*
   onPositionChange(ev: PositionChangeEvent) {
-    this.counterService.relocateCounterCategory(this.categories[ev.oldIndex].id, ev.newIndex)
+     // TODO!!!!
+    this.counterService.relocateCounterCategory(
+      this.categories[ev.oldIndex].id,
+      ev.newIndex
+    )
   }
+    */
 
-  private onAddCategory(data: { categoryName: string }) {
-    const categoryName: string = data.categoryName.trim()
+  private onAddCategory(data: { categoryTitle: string }) {
+    const categoryTitle: string = data.categoryTitle.trim()
 
-     if (categoryName) {
-       this.counterService.addCounterCategory(categoryName)
+    if (categoryTitle) {
+      this.store.dispatch(
+        CounterAct.createCounterCategory({
+          id: this.counterService.nextCounterCategoryId(),
+          title: categoryTitle
+        })
+      )
 
-       setTimeout(() => this.content.scrollToBottom(100))
-     }
+      setTimeout(() => this.content.scrollToBottom(100))
+    }
   }
 
   private onCategoryClick(category: Category) {

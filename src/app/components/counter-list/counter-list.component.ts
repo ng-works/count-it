@@ -1,31 +1,42 @@
 import { Component, Input } from '@angular/core'
-import { Counter } from '../../models/counter.model'
+import { Counter } from '../../store/models/counter.model'
 import { CounterService } from '../../services/counter/counter.service'
 import { AlertController } from '@ionic/angular'
 import { ItemReorderEventDetail } from '@ionic/core'
+import { Store } from '@ngrx/store'
+import * as CounterAct from '../../store/actions/counter.actions'
 
 @Component({
   selector: 'counter-list',
   templateUrl: './counter-list.component.html',
-  styleUrls: ['./counter-list.component.scss'],
+  styleUrls: ['./counter-list.component.scss']
 })
 export class CounterListComponent {
   @Input()
   counters: Counter[]
 
   constructor(
+    private store: Store,
     private counterService: CounterService,
     private alertController: AlertController
   ) {}
 
   onDecrementClick(counter: Counter) {
-    this.counterService.incrementCounter(counter.id, -1)
+    this.store.dispatch(
+      CounterAct.incrementCounter({
+        id: counter.id
+      })
+    )
   }
-  
+
   onIncrementClick(counter: Counter) {
-    this.counterService.incrementCounter(counter.id, 1)
+    this.store.dispatch(
+      CounterAct.decrementCounter({
+        id: counter.id
+      })
+    )
   }
-  
+
   async onRenameClick(counter: Counter) {
     const alert = await this.alertController.create({
       header: 'Rename counter',
@@ -44,11 +55,11 @@ export class CounterListComponent {
         },
         {
           text: 'Rename',
-          handler: data => {
+          handler: (data) => {
             const title = data.counterTitle.trim()
 
             if (title) {
-              this.counterService.renameCounter(counter.id, title)
+              // this.counterService.renameCounter(counter.id, title) // TODO!!!
             }
           }
         }
@@ -67,20 +78,30 @@ export class CounterListComponent {
           text: 'Cancel',
           role: 'cancel'
         },
-        
+
         {
           text: 'Delete',
-          handler: () => this.counterService.removeCounter(counter.id)
+          handler: () =>
+            this.store.dispatch(
+              CounterAct.deleteCounter({
+                id: counter.id
+              })
+            )
         }
       ]
     })
 
     await alert.present()
   }
-  
+
   onItemReorder(ev: CustomEvent<ItemReorderEventDetail>) {
     console.log(ev.detail)
-    this.counterService.relocateCounter(this.counters[ev.detail.from].id, ev.detail.to)
+    /* // TODO
+    this.counterService.relocateCounter(
+      this.counters[ev.detail.from].id,
+      ev.detail.to
+    )
+    */
     ev.detail.complete(false)
     console.log(1111)
   }
