@@ -91,22 +91,24 @@ export const counterReducer = createReducer(
   }),
 
   on(CounterAct.decrementCounter, (state, { id }) => {
-    console.log(5555, id)
     const [
       categoryIndex,
       counterIndex
     ] = getCategoryIndexAndCounterIndexByCounterId(state, id)
-
+    console.log(555, categoryIndex, counterIndex, id, state)
     if (categoryIndex === -1) {
       return state
     }
 
-    return update(state, function* (select) {
+    const ret = update(state, function* (select) {
       const path = select('categories', categoryIndex, 'counters', counterIndex)
-
+      console.log(4444, path)
       yield path.map('count', (it) => it - 1)
       yield path.set('lastUpdate', new Date())
     })
+
+    console.log(999, ret)
+    return ret
   }),
 
   on(CounterAct.decrementCounter, (state, { id }) =>

@@ -1,12 +1,11 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { ActivatedRoute } from '@angular/router'
-import { NavController, AlertController, IonContent } from '@ionic/angular'
+import { AlertController, IonContent } from '@ionic/angular'
 import { Subscription } from 'rxjs'
 import { Store } from '@ngrx/store'
 import { CounterService } from '../../services/counter/counter.service'
 import { Category } from '../../store/models/category.model'
 import * as CounterAct from '../../store/actions/counter.actions'
-import { selectCategoryById } from 'src/app/store/selectors/counter.selectors'
+import { selectCategoryId } from '../../store/selectors/routing.selectors'
 
 @Component({
   selector: 'app-category',
@@ -16,45 +15,27 @@ import { selectCategoryById } from 'src/app/store/selectors/counter.selectors'
 export class CategoryPage implements OnInit, OnDestroy {
   category: Category
 
+  private categoryIdSubscription: Subscription
+
   @ViewChild('content')
   content: IonContent
-
-  private routeSubscription: Subscription
 
   constructor(
     private store: Store,
     private alertController: AlertController,
-    private navController: NavController,
-    private activatedRoute: ActivatedRoute,
     private counterService: CounterService
   ) {}
 
   ngOnInit() {
-    this.routeSubscription = this.activatedRoute.paramMap.subscribe(
-      (paramMap) => {
-        const categoryId = +paramMap.get('categoryId')
-
-        if (Number.isSafeInteger(categoryId)) {
-          const category = this.counterService.getCounterCategoryById(
-            categoryId
-          )
-
-          if (category) {
-            this.category = category
-          } else {
-            this.navController.navigateBack('/categories')
-          }
-        }
-      }
-    )
-
-    this.store
-      .select(selectCategoryById, this.category.id)
-      .subscribe((it) => (this.category = it || this.category))
+    this.categoryIdSubscription = this.store
+      .select(selectCategoryId)
+      .subscribe((it) => {
+        this.category = this.counterService.getCounterCategoryById(it)
+      })
   }
 
   ngOnDestroy() {
-    this.routeSubscription.unsubscribe()
+    this.categoryIdSubscription.unsubscribe()
   }
 
   async onAddCounterClick() {
