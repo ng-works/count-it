@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store'
 import { CounterService } from '../../services/counter/counter.service'
 import { Category } from '../../store/models/category.model'
 import * as CounterAct from '../../store/actions/counter.actions'
-import { selectCategoryId } from '../../store/selectors/routing.selectors'
+import { selectCounterCategory } from '../../store/selectors/routing.selectors'
 
 @Component({
   selector: 'app-category',
@@ -28,9 +28,10 @@ export class CategoryPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.categoryIdSubscription = this.store
-      .select(selectCategoryId)
-      .subscribe((it) => {
-        this.category = this.counterService.getCounterCategoryById(it)
+      .select(selectCounterCategory)
+      .subscribe((category) => {
+        this.category = category
+        console.log('updated category', this.category)
       })
   }
 

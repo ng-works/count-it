@@ -95,7 +95,7 @@ export const counterReducer = createReducer(
       categoryIndex,
       counterIndex
     ] = getCategoryIndexAndCounterIndexByCounterId(state, id)
-    console.log(555, categoryIndex, counterIndex, id, state)
+
     if (categoryIndex === -1) {
       return state
     }
@@ -107,7 +107,6 @@ export const counterReducer = createReducer(
       yield path.set('lastUpdate', new Date())
     })
 
-    console.log(999, ret)
     return ret
   }),
 
