@@ -23,7 +23,7 @@ export class CounterListComponent {
 
   onDecrementClick(counter: Counter) {
     this.store.dispatch(
-      CounterAct.incrementCounter({
+      CounterAct.decrementCounter({
         id: counter.id
       })
     )
@@ -31,7 +31,7 @@ export class CounterListComponent {
 
   onIncrementClick(counter: Counter) {
     this.store.dispatch(
-      CounterAct.decrementCounter({
+      CounterAct.incrementCounter({
         id: counter.id
       })
     )

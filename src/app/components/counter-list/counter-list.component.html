@@ -11,19 +11,31 @@
               {{ counter.title }}
             </div>
           </ion-row>
-            <ion-buttons class="action-buttons">
-              <ion-button class="rename-button" color="primary" fill="clear" (click)="onRenameClick(counter)">
-                <ion-icon name="create-outline"></ion-icon>
-              </ion-button>
-              <ion-button class="delete-button" color="primary" fill="clear" (click)="onDeleteClick(counter)">
-                <ion-icon name="trash-outline"></ion-icon>
-              </ion-button>
-            </ion-buttons>
+          <ion-buttons class="action-buttons">
+            <ion-button
+              class="rename-button"
+              color="primary"
+              fill="clear"
+              (click)="onRenameClick(counter)"
+            >
+              <ion-icon name="create-outline"></ion-icon>
+            </ion-button>
+            <ion-button
+              class="delete-button"
+              color="primary"
+              fill="clear"
+              (click)="onDeleteClick(counter)"
+            >
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
         </ion-card-title>
         <div class="counter-meta">
-          Creation: {{ counter.creation.toISOString().substr(0, 19).replace('T', ' ') }}
-          <br>
-          Last update: {{ counter.lastUpdate.toISOString().substr(0, 19).replace('T', ' ') }}
+          Creation:
+          {{ counter.creation.toISOString().substr(0, 19).replace('T', ' ') }}
+          <br />
+          Last update:
+          {{ counter.lastUpdate.toISOString().substr(0, 19).replace('T', ' ') }}
         </div>
       </ion-card-header>
       <ion-card-content>
@@ -38,7 +50,12 @@
             <ion-icon name="remove-outline"></ion-icon>
           </ion-button>
           <ion-label class="count-label">{{ counter.count }}</ion-label>
-          <ion-button color="primary" fill="solid" class="increment-button" (click)="onIncrementClick(counter)">
+          <ion-button
+            color="primary"
+            fill="solid"
+            class="increment-button"
+            (click)="onIncrementClick(counter)"
+          >
             <ion-icon name="add-outline"></ion-icon>
           </ion-button>
         </ion-buttons>

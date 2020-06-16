@@ -4,7 +4,21 @@ import { CountersState } from '../models/counters-state'
 import * as CounterAct from '../actions/counter.actions'
 
 const defaultState: CountersState = {
-  categories: []
+  categories: [
+    {
+      id: 1,
+      title: 'Category 1',
+      counters: [
+        {
+          id: 1,
+          title: 'Counter 1',
+          count: 10,
+          creation: new Date(),
+          lastUpdate: new Date()
+        }
+      ]
+    }
+  ]
 }
 
 export const counterReducer = createReducer(
@@ -68,12 +82,16 @@ export const counterReducer = createReducer(
       return state
     }
 
-    return update(state, 'categories')
-      .path(categoryIndex, 'counters', counterIndex)
-      .map('count', (it) => it + 1)
+    return update(state, function* (select) {
+      const path = select('categories', categoryIndex, 'counters', counterIndex)
+
+      yield path.map('count', (it) => it + 1)
+      yield path.set('lastUpdate', new Date())
+    })
   }),
 
   on(CounterAct.decrementCounter, (state, { id }) => {
+    console.log(5555, id)
     const [
       categoryIndex,
       counterIndex
@@ -83,9 +101,12 @@ export const counterReducer = createReducer(
       return state
     }
 
-    return update(state, 'categories')
-      .path(categoryIndex, 'counters', counterIndex)
-      .map('count', (it) => it - 1)
+    return update(state, function* (select) {
+      const path = select('categories', categoryIndex, 'counters', counterIndex)
+
+      yield path.map('count', (it) => it - 1)
+      yield path.set('lastUpdate', new Date())
+    })
   }),
 
   on(CounterAct.decrementCounter, (state, { id }) =>

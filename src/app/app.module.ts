@@ -5,6 +5,8 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular'
 import { SplashScreen } from '@ionic-native/splash-screen/ngx'
 import { StatusBar } from '@ionic-native/status-bar/ngx'
 import { StoreModule } from '@ngrx/store'
+import { routerReducer } from '@ngrx/router-store'
+import { StoreDevtoolsModule } from '@ngrx/store-devtools'
 
 import { AppRoutingModule } from './app-routing.module'
 import { AppComponent } from './app.component'
@@ -18,8 +20,10 @@ import { counterReducer } from './store/reducers/counter.reducers'
     IonicModule.forRoot(),
     AppRoutingModule,
     StoreModule.forRoot({
-      counters: counterReducer
-    })
+      counters: counterReducer,
+      routerReducer
+    }),
+    StoreDevtoolsModule.instrument()
   ],
   providers: [
     StatusBar,
