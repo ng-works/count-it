@@ -72,6 +72,39 @@ export const counterReducer = createReducer(
     )
   }),
 
+  on(CounterAct.renameCounter, (state, { id, title }) => {
+    const [
+      categoryIndex,
+      counterIndex
+    ] = getCategoryIndexAndCounterIndexByCounterId(state, id)
+
+    if (categoryIndex === -1) {
+      return state
+    }
+
+    return update(state, function* (select) {
+      const path = select('categories', categoryIndex, 'counters', counterIndex)
+
+      yield path.set('title', title)
+      yield path.set('lastUpdate', new Date())
+    })
+  }),
+
+  on(CounterAct.deleteCounter, (state, { id }) => {
+    const [categoryIndex] = getCategoryIndexAndCounterIndexByCounterId(
+      state,
+      id
+    )
+
+    if (categoryIndex === -1) {
+      return state
+    }
+
+    return update(state, 'categories')
+      .path(categoryIndex, 'counters')
+      .filter((counter) => counter.id !== id)
+  }),
+
   on(CounterAct.incrementCounter, (state, { id }) => {
     const [
       categoryIndex,
@@ -100,19 +133,41 @@ export const counterReducer = createReducer(
       return state
     }
 
-    const ret = update(state, function* (select) {
+    return update(state, function* (select) {
       const path = select('categories', categoryIndex, 'counters', counterIndex)
-      console.log(4444, path)
+
       yield path.map('count', (it) => it - 1)
       yield path.set('lastUpdate', new Date())
     })
-
-    return ret
   }),
 
-  on(CounterAct.decrementCounter, (state, { id }) =>
-    update(state, 'categories').removeFirst((it) => it.id === id)
-  )
+  on(CounterAct.moveCounter, (state, { id, newIndex }) => {
+    const [
+      categoryIndex,
+      oldIndex
+    ] = getCategoryIndexAndCounterIndexByCounterId(state, id)
+
+    if (
+      categoryIndex === -1 ||
+      oldIndex === newIndex ||
+      newIndex >= state.categories[categoryIndex].counters.length
+    ) {
+      return state
+    }
+
+    const counters = state.categories[categoryIndex].counters.filter(
+      (it) => it.id !== id
+    )
+    counters.splice(
+      newIndex,
+      0,
+      state.categories[categoryIndex].counters[oldIndex]
+    )
+
+    return update(state, 'categories')
+      .path(categoryIndex)
+      .set('counters', counters)
+  })
 )
 
 // locals

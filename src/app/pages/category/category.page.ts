@@ -31,7 +31,6 @@ export class CategoryPage implements OnInit, OnDestroy {
       .select(selectCounterCategory)
       .subscribe((category) => {
         this.category = category
-        console.log('updated category', this.category)
       })
   }
 

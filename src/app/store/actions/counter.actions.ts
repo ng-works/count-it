@@ -25,6 +25,11 @@ export const createCounter = createAction(
   props<{ id: number; title: string; categoryId: number }>()
 )
 
+export const renameCounter = createAction(
+  '[Counter] Rename Counter',
+  props<{ id: number; title: string }>()
+)
+
 export const deleteCounter = createAction(
   '[Counter] Delete Counter',
   props<{ id: number }>()
@@ -38,4 +43,9 @@ export const incrementCounter = createAction(
 export const decrementCounter = createAction(
   '[Counter] Decrement Counter',
   props<{ id: number }>()
+)
+
+export const moveCounter = createAction(
+  '[Counter] Move Counter',
+  props<{ id: number; newIndex: number }>()
 )

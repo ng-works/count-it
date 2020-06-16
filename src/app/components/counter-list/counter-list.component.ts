@@ -59,7 +59,9 @@ export class CounterListComponent {
             const title = data.counterTitle.trim()
 
             if (title) {
-              // this.counterService.renameCounter(counter.id, title) // TODO!!!
+              this.store.dispatch(
+                CounterAct.renameCounter({ id: counter.id, title })
+              )
             }
           }
         }
@@ -95,14 +97,13 @@ export class CounterListComponent {
   }
 
   onItemReorder(ev: CustomEvent<ItemReorderEventDetail>) {
-    console.log(ev.detail)
-    /* // TODO
-    this.counterService.relocateCounter(
-      this.counters[ev.detail.from].id,
-      ev.detail.to
+    this.store.dispatch(
+      CounterAct.moveCounter({
+        id: this.counters[ev.detail.from].id,
+        newIndex: ev.detail.to
+      })
     )
-    */
+
     ev.detail.complete(false)
-    console.log(1111)
   }
 }
